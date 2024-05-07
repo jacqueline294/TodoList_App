@@ -1,40 +1,75 @@
 package com.example.todoapp
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.lang.reflect.Modifier
+import java.text.SimpleDateFormat
 import java.util.Locale
+
 
 @Composable
 fun TodoListPage() {
 val TodoList= getTodoData()
+    var inputText by remember {
+        mutableStateOf("")
+    }
 
     Column(
-        modifier = androidx.compose.ui.Modifier
+        modifier = Modifier
             .fillMaxHeight()
             .padding(16.dp)
 
     ) {
-        LazyColumn(
-            content = {
-                itemsIndexed(TodoList) { index: Int, item:TodoData ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-                    Text(text = item.toString())}
+            OutlinedTextField(
+                value = inputText,
+                onValueChange = {
+                    inputText = it
+                })
+            Button(onClick = { }) {
+                Text(text = "Add")
+            }
+        }
+
+                    LazyColumn(
+            content = {
+                itemsIndexed(TodoList) { index: Int, item: TodoData ->
+                    TodoItem(item = item)
+                }
             }
 
         )
@@ -44,16 +79,22 @@ val TodoList= getTodoData()
 @Composable
 fun TodoItem(item:TodoData) {
     Row(
-        modifier = androidx.compose.ui.Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.primary)
-            .padding(16.dp)
+            .padding(16.dp),
+           verticalAlignment = Alignment.CenterVertically
 
     ) {
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+
+
         ) {
             Text(
                 text = SimpleDateFormat("HH:mm:aa, dd/mm", Locale.ENGLISH).format(item.createdAt),
@@ -66,7 +107,7 @@ fun TodoItem(item:TodoData) {
                 color = Color.White
             )
         }
-        IconButton(onClick = onDelete) {
+        IconButton(onClick = {}) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_delete_24),
                 contentDescription = "Delete",
