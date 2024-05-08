@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
-import com.example.todoapp.TodoData
+import com.example.todoapp.Todo
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -79,7 +79,7 @@ fun TodoListPage(viewModel: TodoViewModel) {
         todoList?.let {
             LazyColumn(
                 content = {
-                    itemsIndexed(it) { index: Int, item: TodoData ->
+                    itemsIndexed(it) { index: Int, item: Todo ->
                         TodoItem(
                             item = item,
                             onDelete = { viewModel.deleteTodo(item.id) },
@@ -100,7 +100,7 @@ fun TodoListPage(viewModel: TodoViewModel) {
 }
 
 @Composable
-fun TodoItem(item: TodoData, onDelete: () -> Unit, onUpdate: (String) -> Unit) {
+fun TodoItem(item: Todo, onDelete: () -> Unit, onUpdate: (String) -> Unit) {
     var showEditPopup by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier

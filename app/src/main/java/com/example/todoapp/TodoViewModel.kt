@@ -1,44 +1,44 @@
+package com.example.todoapp
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.todoapp.TodoData
-import com.example.todoapp.TodoManager
+import androidx.lifecycle.viewModelScope
+import com.example.todoapp.db.TodoDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.Date
 
 class TodoViewModel : ViewModel() {
 
-    private var _todoList = MutableLiveData<List<TodoData>>()
-    val todoList: LiveData<List<TodoData>> = _todoList
+    private val todoDao = MainApplication.todoDatabase.getTodoDao()
+    val todoList: LiveData<List<Todo>> = TodoDao.getAllTodos()
 
-    init {
-        getAllTodo()
-    }
 
-    fun getAllTodo() {
-        _todoList.value = TodoManager.getAllTodo().reversed()
-    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addTodo(title: String) {
-        TodoManager.addTodo(title)
-        getAllTodo()
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.addTodo(Todo(title = title, createdAt = Date.from(Instant.now())))
+
+        }
     }
 
     fun updateTodoTitle(id: Int, title: String) {
-        val updatedList = _todoList.value.orEmpty().map {
-            if (it.id == id) {
-                it.copy(title = title) // Update title of the matching todo item
-            } else {
-                it
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.updateTodoTitle(id, title)
+
         }
-        _todoList.value = updatedList
-        TodoManager.updateTodo(id, title)
     }
 
     fun deleteTodo(id: Int) {
-        TodoManager.deleteTodo(id)
-        getAllTodo()
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.deleteTodo(id)
+
+        }
     }
 }
