@@ -16,6 +16,13 @@ object TodoManager {
         todoList.add(TodoData(System.currentTimeMillis().toInt(),title,
             Date.from(Instant.now())))
     }
+    fun updateTodo(id : Int, title : String){
+        val todo = todoList.find { it.id == id }
+        if (todo != null){
+            todo.title = title
+        }
+    }
+
 
     fun deleteTodo(id : Int){
         todoList.removeIf{

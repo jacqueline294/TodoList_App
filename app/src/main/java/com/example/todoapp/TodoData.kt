@@ -9,7 +9,9 @@ data class TodoData(
     var id: Int,
     var title: String,
     var createdAt: Date
-)
+) {
+
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getTodoData(): List<TodoData> {

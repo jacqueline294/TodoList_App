@@ -1,5 +1,7 @@
 package np.com.bimalkafle.todoapp
 
+import EditTaskPopup
+import TodoViewModel
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,15 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
 import com.example.todoapp.TodoData
-import com.example.todoapp.TodoViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 @SuppressLint("NewApi")
 @Composable
-fun TodoListPage(viewModel: TodoViewModel){
-
+fun TodoListPage(viewModel: TodoViewModel) {
     val todoList by viewModel.todoList.observeAsState()
     var inputText by remember {
         mutableStateOf("")
@@ -62,7 +62,7 @@ fun TodoListPage(viewModel: TodoViewModel){
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             OutlinedTextField(
-                modifier= Modifier.weight(1f),
+                modifier = Modifier.weight(1f),
                 value = inputText,
                 onValueChange = {
                     inputText = it
@@ -76,31 +76,32 @@ fun TodoListPage(viewModel: TodoViewModel){
                 Text(text = "Add")
             }
         }
-
         todoList?.let {
             LazyColumn(
                 content = {
-                    itemsIndexed(it){index: Int, item: TodoData ->
-                        TodoItem(item = item, onDelete = {
-                            viewModel.deleteTodo(item.id)
-                        })
+                    itemsIndexed(it) { index: Int, item: TodoData ->
+                        TodoItem(
+                            item = item,
+                            onDelete = { viewModel.deleteTodo(item.id) },
+                            onUpdate = { updatedTitle ->
+                                viewModel.updateTodoTitle(item.id, updatedTitle)
+                            }
+                        )
                     }
                 }
             )
-        }?: Text(
+        } ?: Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             text = "No items yet",
             fontSize = 16.sp
         )
-
-
     }
-
 }
 
 @Composable
-fun TodoItem(item : TodoData,onDelete : ()-> Unit) {
+fun TodoItem(item: TodoData, onDelete: () -> Unit, onUpdate: (String) -> Unit) {
+    var showEditPopup by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,7 +110,6 @@ fun TodoItem(item : TodoData,onDelete : ()-> Unit) {
             .background(MaterialTheme.colorScheme.primary)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Column(
             modifier = Modifier.weight(1f)
@@ -125,6 +125,24 @@ fun TodoItem(item : TodoData,onDelete : ()-> Unit) {
                 color = Color.White
             )
         }
+        IconButton(onClick = { showEditPopup = true }) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_edit_24),
+                contentDescription = "Edit",
+                tint = Color.White
+            )
+        }
+        if (showEditPopup) {
+            EditTaskPopup(
+                currentTitle = item.title,
+                onConfirm = { updatedTitle ->
+                    onUpdate(updatedTitle)
+                    showEditPopup = false // Close the popup after confirming
+                },
+                onDismiss = { showEditPopup = false }
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
         IconButton(onClick = onDelete) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_delete_24),
@@ -133,20 +151,7 @@ fun TodoItem(item : TodoData,onDelete : ()-> Unit) {
             )
         }
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 
