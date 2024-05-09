@@ -5,31 +5,32 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import com.example.todoapp.db.TodoRepository
 import kotlinx.coroutines.launch
+import com.example.todoapp.Todo
 
-class TodoViewModel(
-    private val todoRepository: TodoRepository) : ViewModel() {
 
-    val todoList: LiveData<List<Todo>> = todoRepository.todoList
+
+class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
+    val todoList: LiveData<List<Todo>> = repository.todoList
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addTodo(title: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            todoRepository.addTodo(title)
+        viewModelScope.launch {
+            repository.addTodo(title)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateTodoTitle(id: Int, title: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            todoRepository.updateTodoTitle(id, title)
+        viewModelScope.launch {
+            repository.updateTodoTitle(id, title)
         }
     }
 
     fun deleteTodo(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            todoRepository.deleteTodo(id)
+        viewModelScope.launch {
+            repository.deleteTodo(id)
         }
     }
 }
