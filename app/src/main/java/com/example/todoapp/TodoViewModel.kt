@@ -7,11 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.db.TodoRepository
 import kotlinx.coroutines.launch
-import com.example.todoapp.Todo
 
 
-
-class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
+class TodoViewModel(
+    private val repository: TodoRepository) : ViewModel() {
     val todoList: LiveData<List<Todo>> = repository.todoList
 
     @RequiresApi(Build.VERSION_CODES.O)
